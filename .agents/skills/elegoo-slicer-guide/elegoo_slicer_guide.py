@@ -23,6 +23,7 @@ Usage via stdin:
 import argparse
 import json
 import os
+import select
 import sys
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -875,16 +876,19 @@ def parse_args_and_input() -> Dict[str, Any]:
     # Dictionary to hold merged input values
     input_data: Dict[str, Any] = {}
 
-    # 1. Read stdin if piped or forced
+    # 1. Read stdin if forced or if stdin has data ready (non-blocking select check)
     if args.stdin or (not sys.stdin.isatty()):
         try:
-            stdin_content = sys.stdin.read().strip()
-            if stdin_content:
-                parsed_stdin = json.loads(stdin_content)
-                if isinstance(parsed_stdin, dict):
-                    input_data.update(parsed_stdin)
+            # Non-blocking check for available stdin input
+            rlist, _, _ = select.select([sys.stdin], [], [], 0.05)
+            if rlist or args.stdin:
+                stdin_content = sys.stdin.read().strip()
+                if stdin_content:
+                    parsed_stdin = json.loads(stdin_content)
+                    if isinstance(parsed_stdin, dict):
+                        input_data.update(parsed_stdin)
         except Exception:
-            pass  # Fall back to CLI flags if stdin parsing fails
+            pass  # Fall back to CLI flags if stdin reading fails
 
     # 2. Read --json argument if provided
     if args.json:
