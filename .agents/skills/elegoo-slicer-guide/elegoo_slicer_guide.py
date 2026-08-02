@@ -5,7 +5,7 @@ Elegoo Slicer Guide & Recommendations Generator
 Provides comprehensive 3D printing slicer settings recommendations tailored for
 Elegoo Slicer (Cura / Orca engine based) and Elegoo FDM/Resin printers.
 
-Supports materials: PLA, PETG, ABS, TPU, ASA, PC, Nylon (PA), PLA+, Silk PLA, Wood PLA, CF-composites, Resin.
+Supports materials: PLA, PETG, ABS, TPU, ASA, PC, Nylon (PA), PLA+, Silk PLA, Wood PLA, CF-composites.
 Supports quality targets: draft, standard, high, ultra.
 Supports printer types: FDM, Resin.
 Supports nozzle sizes: 0.2mm, 0.4mm, 0.6mm, 0.8mm.
@@ -271,46 +271,6 @@ MATERIAL_PROFILES: Dict[str, Dict[str, Any]] = {
         "z_offset_adj": 0.0,
         "default_adhesion": "raft",
     },
-    "Resin": {
-        "full_name": "Elegoo Standard / ABS-Like / Plant-Based Photopolymer Resin",
-        "aliases": [
-            "resin",
-            "photopolymer",
-            "standard_resin",
-            "abs_like_resin",
-            "water_washable_resin",
-        ],
-        "ease_of_use": "Intermediate (Requires Safety Equipment & Washing/Curing)",
-        "enclosure_required": False,
-        "filament_drying_required": False,
-        "drying_recommendation": "Keep resin stored in sealed bottle in cool, dark place away from UV light.",
-        "bed_preparation": "Level build plate against LCD screen using levelling paper or vat FEP film. Ensure clean build plate.",
-        "notes": "Produces ultra-high resolution prints with smooth surface finish. Requires liquid handling, IPA wash, and UV post-curing.",
-        "base_temps": {
-            "extruder": 0,
-            "extruder_min": 0,
-            "extruder_max": 0,
-            "bed": 22,
-            "bed_min": 20,
-            "bed_max": 25,
-        },
-        "cooling": {
-            "enable": False,
-            "fan_speed_percent": 0,
-            "min_fan_speed": 0,
-            "max_fan_speed": 0,
-            "initial_layer_fan": 0,
-            "regular_fan_at_layer": 0,
-            "aux_fan_speed": 0,
-        },
-        "flow_rate": 100.0,
-        "retraction_distance_direct": 0.0,
-        "retraction_distance_bowden": 0.0,
-        "retraction_speed": 0,
-        "speed_factor": 1.0,
-        "z_offset_adj": 0.0,
-        "default_adhesion": "none",
-    },
 }
 
 
@@ -395,13 +355,8 @@ PRINTER_MODELS: Dict[str, Dict[str, Any]] = {
 # Helper Functions
 # ==============================================================================
 
-def normalize_material_name(raw_material: str, printer_type: str = "FDM") -> str:
+def normalize_material_name(raw_material: str) -> str:
     """Normalize input material string to standard profile key."""
-    if not raw_material or raw_material.strip().lower() in ["default", "none", "auto"]:
-        if printer_type == "Resin":
-            return "Resin"
-        return "PLA"
-
     clean = raw_material.strip().upper().replace("-", "_").replace(" ", "_")
     
     for key, prof in MATERIAL_PROFILES.items():
@@ -411,8 +366,6 @@ def normalize_material_name(raw_material: str, printer_type: str = "FDM") -> str
             return key
 
     # Partial match fallback
-    if "RESIN" in clean or "MSLA" in clean or "PHOTOPOLYMER" in clean:
-        return "Resin"
     if "PLA" in clean:
         return "PLA"
     if "PETG" in clean or "PET" in clean:
@@ -428,8 +381,6 @@ def normalize_material_name(raw_material: str, printer_type: str = "FDM") -> str
     if "NYLON" in clean or "PA" in clean:
         return "Nylon"
 
-    if printer_type == "Resin":
-        return "Resin"
     return "PLA"  # Default fallback
 
 
@@ -449,7 +400,7 @@ def normalize_quality(raw_quality: Optional[str]) -> str:
     return "standard"
 
 
-def normalize_printer_type(raw_type: Optional[str], raw_model: Optional[str] = None, raw_material: Optional[str] = None) -> str:
+def normalize_printer_type(raw_type: Optional[str], raw_model: Optional[str] = None) -> str:
     """Determine if printer is FDM or Resin."""
     if raw_type:
         clean_t = raw_type.strip().lower()
@@ -462,9 +413,6 @@ def normalize_printer_type(raw_type: Optional[str], raw_model: Optional[str] = N
         clean_m = raw_model.strip().lower()
         if "mars" in clean_m or "saturn" in clean_m or "jupiter" in clean_m:
             return "Resin"
-
-    if raw_material and "resin" in raw_material.strip().lower():
-        return "Resin"
 
     return "FDM"
 
@@ -648,7 +596,7 @@ def analyze_issue(
 # ==============================================================================
 
 def generate_recommendations(
-    material_raw: Optional[str] = "PLA",
+    material_raw: str,
     quality_raw: Optional[str] = "standard",
     printer_type_raw: Optional[str] = "FDM",
     printer_model_raw: Optional[str] = None,
@@ -657,11 +605,11 @@ def generate_recommendations(
 ) -> Dict[str, Any]:
     """Generate full structured slicer settings recommendations."""
     
-    p_type = normalize_printer_type(printer_type_raw, printer_model_raw, material_raw)
-    mat_key = normalize_material_name(material_raw or "PLA", p_type)
+    mat_key = normalize_material_name(material_raw)
     mat_prof = MATERIAL_PROFILES[mat_key]
     qual_key = normalize_quality(quality_raw)
     qual_prof = QUALITY_PROFILES[qual_key]
+    p_type = normalize_printer_type(printer_type_raw, printer_model_raw)
 
     # Determine printer profile details
     p_model_key = "neptune_4"
@@ -669,11 +617,8 @@ def generate_recommendations(
         pm_clean = printer_model_raw.lower()
         if "3" in pm_clean:
             p_model_key = "neptune_3"
-        elif "mars" in pm_clean or "saturn" in pm_clean or "jupiter" in pm_clean:
+        elif "mars" in pm_clean or "saturn" in pm_clean:
             p_model_key = "mars_saturn"
-
-    if p_type == "Resin" and not printer_model_raw:
-        p_model_key = "mars_saturn"
 
     p_info = PRINTER_MODELS.get(p_model_key, PRINTER_MODELS["neptune_4"])
 
@@ -764,7 +709,7 @@ def generate_recommendations(
             "quality_target": qual_key,
             "printer_type": p_type,
             "printer_model": printer_model_raw or p_info["name"],
-            "nozzle_size_mm": nozzle_size if p_type == "FDM" else "N/A (Resin MSLA)",
+            "nozzle_size_mm": nozzle_size,
             "issue_specified": issue_raw or None,
         },
         "material_profile": {
@@ -917,7 +862,7 @@ def parse_args_and_input() -> Dict[str, Any]:
         description="Elegoo Slicer Settings Guide & Profile Recommendations",
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    parser.add_argument("-m", "--material", type=str, help="Filament/Resin material type (PLA, PETG, ABS, TPU, ASA, PC, Nylon, Resin)")
+    parser.add_argument("-m", "--material", type=str, help="Filament/Resin material type (PLA, PETG, ABS, TPU, ASA, PC, Nylon)")
     parser.add_argument("-q", "--quality", type=str, help="Quality target (draft, standard, high, ultra)")
     parser.add_argument("-p", "--printer-type", "--printer_type", dest="printer_type", type=str, help="Printer technology (FDM or Resin)")
     parser.add_argument("--printer-model", "--printer_model", dest="printer_model", type=str, help="Printer model (e.g., Neptune 4 Pro, Neptune 3, Mars 4)")
@@ -969,19 +914,12 @@ def parse_args_and_input() -> Dict[str, Any]:
         input_data["nozzle_size"] = args.nozzle_size
 
     # Defaults
-    material = input_data.get("material")
-    if material is not None:
-        material = str(material)
-
+    material = str(input_data.get("material") or "PLA")
     quality = str(input_data.get("quality") or "standard")
-    printer_type = input_data.get("printer_type")
-    if printer_type is not None:
-        printer_type = str(printer_type)
-
+    printer_type = str(input_data.get("printer_type") or "FDM")
     printer_model = input_data.get("printer_model")
     if printer_model is not None:
         printer_model = str(printer_model)
-
     issue = input_data.get("issue")
     if issue is not None:
         issue = str(issue)
