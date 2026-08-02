@@ -1,0 +1,60 @@
+{
+  "name": "Print Monitor",
+  "description": "Monitors printer status every 10 minutes via Moonraker API. Alerts the user on important events: print completion, errors, temperature anomalies, milestones, or printer going offline.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "*/10 * * * *",
+      "one_time_date": null,
+      "timezone": "America/Los_Angeles",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "print_monitor",
+      "namespace": "base44",
+      "version": "1.0"
+    },
+    "do": [
+      {
+        "check_printer": {
+          "call": "invoke_backend_function",
+          "then": "analyze_and_notify",
+          "with": {
+            "args": {
+              "command": "status"
+            },
+            "function_name": "moonrakerProxy"
+          },
+          "x-base44": {
+            "description": "Poll Moonraker for printer status",
+            "title": "Check Printer Status"
+          }
+        }
+      },
+      {
+        "analyze_and_notify": {
+          "call": "invoke_superagent_step",
+          "then": "end",
+          "with": {
+            "message": "You are Kestrel, a 3D printing assistant. A print monitoring workflow just polled the printer. Here is the current printer status data:\n\n${ .check_printer }\n\nAnalyze this status and decide if the user should be notified. Only broadcast a message if something notable happened:\n- Print just completed or failed\n- Error state detected\n- Temperature anomaly (heating too fast/slow, thermal runaway risk)\n- Print progress milestone (25%, 50%, 75%)\n- Printer went offline or connection lost\n\nIf nothing notable (still printing normally, idle, or already reported), do NOT broadcast \u2014 just acknowledge silently.\n\nIf you need to notify, use broadcast_message to send a concise update to the owner. Format with emoji for quick scanning. Include actionable info (e.g., 'Print failed at 45% \u2014 check filament' or '\ud83d\udda8\ufe0f Print complete! Filament used: 12.3g')."
+          },
+          "x-base44": {
+            "description": "Agent analyzes status and notifies if needed",
+            "title": "Analyze & Notify"
+          }
+        }
+      }
+    ]
+  }
+}
