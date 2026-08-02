@@ -1,0 +1,56 @@
+{
+  "properties": {
+    "category": {
+      "enum": [
+        "firmware",
+        "mechanical",
+        "thermal",
+        "slicing",
+        "gcode",
+        "connectivity",
+        "filament",
+        "other"
+      ],
+      "type": "string"
+    },
+    "error_code": {
+      "type": "string"
+    },
+    "error_message": {
+      "type": "string"
+    },
+    "gcode_snippet": {
+      "type": "string"
+    },
+    "job_id": {
+      "type": "string"
+    },
+    "klipper_log": {
+      "type": "string"
+    },
+    "printer": {
+      "type": "string"
+    },
+    "resolution": {
+      "type": "string"
+    },
+    "resolved": {
+      "type": "boolean"
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error",
+        "critical"
+      ],
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "required": [],
+  "name": "ErrorLog"
+}

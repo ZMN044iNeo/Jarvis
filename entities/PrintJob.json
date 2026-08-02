@@ -1,0 +1,77 @@
+{
+  "properties": {
+    "duration_minutes": {
+      "type": "number"
+    },
+    "end_time": {
+      "type": "string"
+    },
+    "error_count": {
+      "type": "number"
+    },
+    "file_name": {
+      "type": "string"
+    },
+    "filament_used_g": {
+      "type": "number"
+    },
+    "gcode_file": {
+      "type": "string"
+    },
+    "layer_height": {
+      "type": "number"
+    },
+    "material": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "printer": {
+      "type": "string"
+    },
+    "quality_rating": {
+      "enum": [
+        "excellent",
+        "good",
+        "acceptable",
+        "poor",
+        "failed"
+      ],
+      "type": "string"
+    },
+    "result": {
+      "enum": [
+        "success",
+        "failed",
+        "cancelled",
+        "in_progress",
+        "queued"
+      ],
+      "type": "string"
+    },
+    "slicer": {
+      "type": "string"
+    },
+    "slicer_profile": {
+      "type": "string"
+    },
+    "start_time": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "queued",
+        "printing",
+        "paused",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "required": [],
+  "name": "PrintJob"
+}
