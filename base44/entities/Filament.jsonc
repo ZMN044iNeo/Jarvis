@@ -1,0 +1,55 @@
+{
+  "properties": {
+    "brand": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string"
+    },
+    "diameter": {
+      "type": "number"
+    },
+    "material": {
+      "enum": [
+        "PLA",
+        "PETG",
+        "ABS",
+        "TPU",
+        "ASA",
+        "PC",
+        "Nylon",
+        "PVA",
+        "HIPS",
+        "Other"
+      ],
+      "type": "string"
+    },
+    "remaining_weight_g": {
+      "type": "number"
+    },
+    "spool_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "in_use",
+        "stored",
+        "empty",
+        "loading"
+      ],
+      "type": "string"
+    },
+    "total_weight_g": {
+      "type": "number"
+    },
+    "temperature_max": {
+      "type": "number"
+    },
+    "temperature_min": {
+      "type": "number"
+    }
+  },
+  "type": "object",
+  "required": [],
+  "name": "Filament"
+}

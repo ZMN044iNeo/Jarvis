@@ -1,0 +1,45 @@
+{
+  "properties": {
+    "board": {
+      "type": "string"
+    },
+    "firmware_version": {
+      "type": "string"
+    },
+    "klipper_config": {
+      "type": "string"
+    },
+    "moonraker_url": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "printer_type": {
+      "enum": [
+        "Cartesian",
+        "CoreXY",
+        "Delta",
+        "Polar",
+        "Scara"
+      ],
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "online",
+        "offline",
+        "error",
+        "printing",
+        "idle"
+      ],
+      "type": "string"
+    },
+    "build_volume": {
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "required": [],
+  "name": "PrinterProfile"
+}
