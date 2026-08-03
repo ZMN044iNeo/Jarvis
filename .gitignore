@@ -1,13 +1,12 @@
-# Secrets — never commit these
+# Secrets — actual values never committed, use .env.example as template
 .agents/.env
 .env
-*.env
+# Allow .env.example
+!*.env.example
 
-# Base44 internal docs
-.agents/platform-docs/
-
-# Node modules
-node_modules/
+# Python cache
+*.pyc
+__pycache__/
 
 # OS files
 .DS_Store
@@ -16,5 +15,3 @@ Thumbs.db
 # Temp files
 *.tmp
 *.bak
-*.pyc
-__pycache__/
