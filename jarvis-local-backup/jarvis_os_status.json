@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-08-29T01:30:12",
+  "workspace": "C:\\Users\\pharo\\Desktop\\Jarvis Ollama route",
+  "storage": {
+    "c_drive": "Storage C:\\ | Used: 228.53 GB / 237.20 GB | Free: 8.67 GB (3.7% free) [CRITICAL]",
+    "e_drive": "Storage E:\\ | Used: 242.80 GB / 366.79 GB | Free: 123.99 GB (33.8% free) [NOMINAL]"
+  },
+  "workspace_report": "Storage report for C:\\Users\\pharo\\Desktop\\Jarvis Ollama route:\n1. [DIR] .venv - 723.65 MB\n2. [DIR] JarvisV3 - 1.14 MB\n3. [DIR] .git - 1.14 MB\n4. [FILE] jarvis_gui.py - 85.63 KB\n5. [FILE] tools.py - 50.22 KB\n6. [FILE] jarvis.py - 12.05 KB\n7. [FILE] voice_engine.py - 10.64 KB\n8. [FILE] assist_local.py - 9.52 KB\n9. [FILE] jarvis_service.py - 3.69 KB\n10. [FILE] spot.py - 2.40 KB"
+}
