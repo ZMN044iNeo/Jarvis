@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+jarvis.log
+screenshots/
+visuals/
+*.tmp
+*.temp
+Thumbs.db
